@@ -1,4 +1,4 @@
-import { REACT_TEXT } from "./util";
+import { REACT_TEXT, REACT_FORWORD_REF } from "./util";
 import addEvent from "./event";
 
 function render(vnode, container) {
@@ -9,6 +9,7 @@ function render(vnode, container) {
 
 export function createDOM(vnode) {
   const { type, props } = vnode;
+  let { ref } = vnode;
   let el;
   if (type === REACT_TEXT) {
     el = document.createTextNode(props.content);
@@ -23,8 +24,9 @@ export function createDOM(vnode) {
     } else {
       el = mountFunctionComponent(vnode);
     }
+  } else if (type.$$typeof === REACT_FORWORD_REF) {
+    el = mountForwardRef(vnode);
   }
-  
   if (props?.children) {
     let children = props.children;
     if (!Array.isArray(props.children)) {
@@ -35,6 +37,7 @@ export function createDOM(vnode) {
     });
   }
   vnode.dom = el;
+  if (ref) ref.current = el;
   return el;
 }
 
@@ -63,10 +66,20 @@ function mountFunctionComponent(vnode) {
 }
 
 function mountClassComponent(vnode) {
-  const { type, props } = vnode;
+  const { type, props  } = vnode;
+  let ref = vnode.ref
   const classInstance = new type(props);
   const renderVdom = classInstance.render();
   classInstance.oldRenderVdom = vnode.oldRenderVdom = renderVdom;
+  if(ref) ref.current = classInstance
+
+  return createDOM(renderVdom);
+}
+
+function mountForwardRef(vnode) {
+  const { type, props, ref } = vnode;
+  const renderVdom = type.render(props, ref);
+  vnode.oldRenderVdom = renderVdom;
 
   return createDOM(renderVdom);
 }

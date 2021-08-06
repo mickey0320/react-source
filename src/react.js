@@ -1,4 +1,4 @@
-import { wrapToVdom } from "./util";
+import { wrapToVdom, REACT_FORWORD_REF } from "./util";
 import Component from "./Component";
 
 function createElement(type, config = {}, children) {
@@ -23,9 +23,21 @@ function createElement(type, config = {}, children) {
   };
 }
 
+function createRef(){
+  return { current: null}
+}
+function forwardRef(render){
+  return {
+    $$typeof: REACT_FORWORD_REF,
+    render,
+  }; 
+}
+
 const React = {
   createElement,
   Component,
+  createRef,
+  forwardRef
 };
 
 export default React;

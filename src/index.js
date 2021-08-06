@@ -14,7 +14,16 @@ import ReactDOM from "./react-dom";
 //     </div>
 //   );
 // }
+function TextInput(props, forwardRef) {
+  return <input ref={forwardRef} />;
+}
+
+const ForwardRefInput = React.forwardRef(TextInput);
 class Hello extends React.Component {
+  constructor(props) {
+    super(props);
+    this.inputRef = React.createRef();
+  }
   state = {
     number: 0,
   };
@@ -32,7 +41,9 @@ class Hello extends React.Component {
   render() {
     return (
       <div style={{ color: this.props.color }} onClick={this.handleClick}>
-        {this.state.number}
+        {/* {this.state.number} */}
+        <ForwardRefInput ref={this.inputRef} />
+        <button onClick={() => this.inputRef.current.focus()}>focus</button>
       </div>
     );
   }
