@@ -1,4 +1,5 @@
-const { wrapToVdom } = require("./util");
+import { wrapToVdom } from "./util";
+import Component from "./Component";
 
 function createElement(type, config = {}, children) {
   let ref, key;
@@ -22,6 +23,9 @@ function createElement(type, config = {}, children) {
   };
 }
 
-module.exports = {
+const React = {
   createElement,
+  Component,
 };
+
+export default React;
